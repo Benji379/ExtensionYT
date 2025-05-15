@@ -33,4 +33,5 @@ echo Copiando serverYT.exe a la carpeta de inicio...
 copy /Y "%SOURCE%" "%STARTUP_FOLDER%\serverYT.exe"
 
 echo Instalación completada con icono personalizado.
+start "" "%STARTUP_FOLDER%\serverYT.exe"
 pause
