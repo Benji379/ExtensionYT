@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Downloader</title>
+    <style>
+      :root {
+        font-size: 40px;
+      }
+
+      body {
+        background-color: #0f0f0f;
+        color: #ffffff;
+        width: 400px;
+        padding: 20px;
+        font-family: sans-serif;
+      }
+
+      .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .social-icons a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #262726;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        background-color: #3a3a3a;
+      }
+
+      .social-icons svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+      }
+
+      .networks {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      button {
+        margin: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #262726;
+        color: white;
+        transition: background-color 0.3s ease;
+        position: relative;
+        animation: fade-in 0.5s ease forwards;
+        opacity: 0;
+      }
+
+      button:hover {
+        background-color: #3a3a3a;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .loader {
+        margin-top: 10px;
+        font-size: 16px;
+      }
+
+      .history-list {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 10px;
+        width: 100%;
+      }
+
+      .history-list li {
+        background-color: #262726;
+        color: white;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 12px;
+        font-size: 14px;
+        word-wrap: break-word;
+      }
+
+      .history-list li a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .history-list li a:hover {
+        text-decoration: underline;
+      }
+
+      .history-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+        justify-content: center;
+      }
+
+      .history-controls button {
+        background-color: #262726;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .history-controls button:hover {
+        background-color: #3a3a3a;
+      }
+      .download-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+      .download-icon a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #262726;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .download-icon a:hover {
+        background-color: #3a3a3a;
+      }
+
+      .download-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="server-status-indicator"
+      style="
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: gray;
+        border: 2px solid white;
+      "
+      title="Estado del servidor"
+    ></div>
+
+    <div class="download-icon">
+      <a
+        href="https://github.com/Benji379/ExtensionYT"
+        target="_blank"
+        title="Descargar extensión"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="128"
+          height="128"
+          viewBox="0 0 24 24"
+        >
+          <g
+            fill="none"
+            stroke="#ffffff"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          >
+            <path
+              d="M12 22v-9m0 9l-2.5-2m2.5 2l2.5-2M5.034 9.117A4.002 4.002 0 0 0 6 17h1"
+            />
+            <path
+              d="M15.83 7.138a5.5 5.5 0 0 0-10.796 1.98S5.187 10 5.5 10.5"
+            />
+            <path d="M17 17a5 5 0 1 0-1.17-9.862L14.5 7.5" />
+          </g>
+        </svg>
+      </a>
+    </div>
+
+    <div class="social-icons">
+      <a
+        href="https://www.instagram.com/benji_jal/"
+        target="_blank"
+        title="Instagram"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="128"
+          height="128"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#ffffff"
+            fill-rule="evenodd"
+            d="M7.465 1.066C8.638 1.012 9.012 1 12 1s3.362.013 4.534.066s1.972.24 2.672.511c.733.277 1.398.71 1.948 1.27c.56.549.992 1.213 1.268 1.947c.272.7.458 1.5.512 2.67C22.988 8.639 23 9.013 23 12s-.013 3.362-.066 4.535c-.053 1.17-.24 1.97-.512 2.67a5.4 5.4 0 0 1-1.268 1.949c-.55.56-1.215.992-1.948 1.268c-.7.272-1.5.458-2.67.512c-1.174.054-1.548.066-4.536.066s-3.362-.013-4.535-.066c-1.17-.053-1.97-.24-2.67-.512a5.4 5.4 0 0 1-1.949-1.268a5.4 5.4 0 0 1-1.269-1.948c-.271-.7-.457-1.5-.511-2.67C1.012 15.361 1 14.987 1 12s.013-3.362.066-4.534s.24-1.972.511-2.672a5.4 5.4 0 0 1 1.27-1.948a5.4 5.4 0 0 1 1.947-1.269c.7-.271 1.5-.457 2.67-.511m8.98 1.98c-1.16-.053-1.508-.064-4.445-.064s-3.285.011-4.445.064c-1.073.049-1.655.228-2.043.379c-.513.2-.88.437-1.265.822a3.4 3.4 0 0 0-.822 1.265c-.151.388-.33.97-.379 2.043c-.053 1.16-.064 1.508-.064 4.445s.011 3.285.064 4.445c.049 1.073.228 1.655.379 2.043c.176.477.457.91.822 1.265c.355.365.788.646 1.265.822c.388.151.97.33 2.043.379c1.16.053 1.507.064 4.445.064s3.285-.011 4.445-.064c1.073-.049 1.655-.228 2.043-.379c.513-.2.88-.437 1.265-.822c.365-.355.646-.788.822-1.265c.151-.388.33-.97.379-2.043c.053-1.16.064-1.508.064-4.445s-.011-3.285-.064-4.445c-.049-1.073-.228-1.655-.379-2.043c-.2-.513-.437-.88-.822-1.265a3.4 3.4 0 0 0-1.265-.822c-.388-.151-.97-.33-2.043-.379m-5.85 12.345a3.669 3.669 0 0 0 4-5.986a3.67 3.67 0 1 0-4 5.986M8.002 8.002a5.654 5.654 0 1 1 7.996 7.996a5.654 5.654 0 0 1-7.996-7.996m10.906-.814a1.337 1.337 0 1 0-1.89-1.89a1.337 1.337 0 0 0 1.89 1.89"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+      <a
+        href="https://www.tiktok.com/@benji.al.379"
+        target="_blank"
+        title="TikTok"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="128"
+          height="128"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#ffffff"
+            d="M19.321 5.562a5 5 0 0 1-.443-.258a6.2 6.2 0 0 1-1.137-.966c-.849-.971-1.166-1.956-1.282-2.645h.004c-.097-.573-.057-.943-.05-.943h-3.865v14.943q.002.3-.008.595l-.004.073q0 .016-.003.033v.009a3.28 3.28 0 0 1-1.65 2.604a3.2 3.2 0 0 1-1.6.422c-1.8 0-3.26-1.468-3.26-3.281s1.46-3.282 3.26-3.282c.341 0 .68.054 1.004.16l.005-3.936a7.18 7.18 0 0 0-5.532 1.62a7.6 7.6 0 0 0-1.655 2.04c-.163.281-.779 1.412-.853 3.246c-.047 1.04.266 2.12.415 2.565v.01c.093.262.457 1.158 1.049 1.913a7.9 7.9 0 0 0 1.674 1.58v-.01l.009.01c1.87 1.27 3.945 1.187 3.945 1.187c.359-.015 1.562 0 2.928-.647c1.515-.718 2.377-1.787 2.377-1.787a7.4 7.4 0 0 0 1.296-2.153c.35-.92.466-2.022.466-2.462V8.273c.047.028.672.441.672.441s.9.577 2.303.952c1.006.267 2.363.324 2.363.324V6.153c-.475.052-1.44-.098-2.429-.59"
+          />
+        </svg>
+      </a>
+      <a href="https://github.com/Benji379" target="_blank" title="GitHub">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="128"
+          height="128"
+          viewBox="0 0 24 24"
+        >
+          <g fill="none">
+            <g clip-path="url(#IconifyId196d53a542c921e318)">
+              <path
+                fill="#ffffff"
+                fill-rule="evenodd"
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385c.6.105.825-.255.825-.57c0-.285-.015-1.23-.015-2.235c-3.015.555-3.795-.735-4.035-1.41c-.135-.345-.72-1.41-1.23-1.695c-.42-.225-1.02-.78-.015-.795c.945-.015 1.62.87 1.845 1.23c1.08 1.815 2.805 1.305 3.495.99c.105-.78.42-1.305.765-1.605c-2.67-.3-5.46-1.335-5.46-5.925c0-1.305.465-2.385 1.23-3.225c-.12-.3-.54-1.53.12-3.18c0 0 1.005-.315 3.3 1.23c.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23c.66 1.65.24 2.88.12 3.18c.765.84 1.23 1.905 1.23 3.225c0 4.605-2.805 5.625-5.475 5.925c.435.375.81 1.095.81 2.22c0 1.605-.015 2.895-.015 3.3c0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12"
+                clip-rule="evenodd"
+              />
+            </g>
+            <defs>
+              <clipPath id="IconifyId196d53a542c921e318">
+                <path fill="#fff" d="M0 0h24v24H0z" />
+              </clipPath>
+            </defs>
+          </g>
+        </svg>
+      </a>
+      <a href="https://linktr.ee/BenjiJal" target="_blank" title="Linktree">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          shape-rendering="geometricPrecision"
+          text-rendering="geometricPrecision"
+          image-rendering="optimizeQuality"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          viewBox="0 0 417 512.238"
+        >
+          <path
+            fill="#ffffff"
+            fill-rule="nonzero"
+            d="M171.274 344.942h74.09v167.296h-74.09V344.942zM0 173.468h126.068l-89.622-85.44 49.591-50.985 85.439 87.829V0h74.086v124.872L331 37.243l49.552 50.785-89.58 85.24H417v70.502H290.252l90.183 87.629L331 381.192 208.519 258.11 86.037 381.192l-49.591-49.591 90.218-87.631H0v-70.502z"
+          />
+        </svg>
+      </a>
+    </div>
+
+    <h3>Formato</h3>
+    <div class="button-container">
+      <button id="mp3">Audio</button>
+      <button id="mp4">Video</button>
+    </div>
+
+    <div id="qualityList" class="networks"></div>
+    <div id="loading" class="loader"></div>
+
+    <h3>Historial de descargas</h3>
+
+    <div class="history-controls">
+      <button id="filter-all">Todos</button>
+      <button id="filter-audio">Audio</button>
+      <button id="filter-video">Video</button>
+      <button id="clear-history">Borrar historial</button>
+    </div>
+
+    <ul id="historyList" class="history-list"></ul>
+
+    <script src="/js/popup.js"></script>
+  </body>
+</html>
